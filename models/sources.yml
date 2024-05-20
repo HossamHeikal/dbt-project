@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+    - name: jaffle_shop
+      description: This is a replica of the Postgres database used by our app
+      database: raw
+      schema: jaffle_shop
+      tables:
+          - name: customers
+            description: One record per customer (raw customer data).
+          - name: orders
+            loaded_at_field: _etl_loaded_at
+            freshness:
+              warn_after: {count: 12, period: hour}
+              error_after: {count: 24, period: hour}
+            description: raw order data.. Includes cancelled and deleted orders.
+              
+    - name: stripe
+      description: Payments processed through Stripe
+      database: raw
+      schema: stripe
+      tables:
+        - name: payment
+          loaded_at_field: _batched_at
+          freshness:
+            warn_after: {count: 12, period: hour}
+            error_after: {count: 24, period: hour}
+          description: One record per payment.
+      
+      
+    
